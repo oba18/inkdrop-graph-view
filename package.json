@@ -1,0 +1,41 @@
+{
+  "name": "graph-view",
+  "version": "0.1.0",
+  "description": "Obsidian-style graph view: see how your notes link to each other",
+  "keywords": [
+    "inkdrop",
+    "graph",
+    "network",
+    "backlinks",
+    "visualization"
+  ],
+  "license": "MIT",
+  "main": "./lib/index.js",
+  "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "d3-force": "^3.0.0"
+  },
+  "devDependencies": {
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.14",
+    "@inkdropapp/types": "^0.1.1",
+    "@types/d3-force": "^3.0.10",
+    "@types/event-kit": "^2.4.4",
+    "@types/react": "^19.3.0",
+    "event-kit": "^2.5.3",
+    "inkdrop-model": "^3.0.1",
+    "tsdown": "^0.23.1",
+    "typescript": "^7.0.2"
+  },
+  "engines": {
+    "inkdrop": "^6.0.0"
+  },
+  "styleSheets": [
+    "graph-view.css"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "menu": [
+    {
+      "label": "Plugins",
+      "submenu": [
+        {
+          "label": "Graph View",
+          "submenu": [
+            { "label": "グラフビューを表示", "command": "graph-view:show" },
+            { "label": "ローカルグラフの表示を切り替え", "command": "graph-view:toggle-local" }
+          ]
+        }
+      ]
+    }
+  ],
+  "context-menu": {
+    ".editor-header-more .menu": [
+      { "label": "ローカルグラフの表示を切り替え", "command": "graph-view:toggle-local" }
+    ]
+  }
+}

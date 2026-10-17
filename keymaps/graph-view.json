@@ -1,0 +1,6 @@
+{
+  "body": {
+    "cmd-alt-g": "graph-view:toggle",
+    "cmd-alt-l": "graph-view:toggle-local"
+  }
+}
