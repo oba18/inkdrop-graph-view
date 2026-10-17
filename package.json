@@ -1,6 +1,6 @@
 {
   "name": "graph-view",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "Obsidian-style graph view: see how your notes link to each other",
   "keywords": [
     "inkdrop",
@@ -10,15 +10,26 @@
     "visualization"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oba18/inkdrop-graph-view"
+  },
+  "bugs": {
+    "url": "https://github.com/oba18/inkdrop-graph-view/issues"
+  },
   "main": "./lib/index.js",
+  "files": [
+    "lib",
+    "keymaps",
+    "menus",
+    "styles",
+    "THIRD_PARTY_LICENSES"
+  ],
   "scripts": {
     "dev": "tsdown --watch",
     "build": "tsdown",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
-  },
-  "dependencies": {
-    "d3-force": "^3.0.0"
   },
   "devDependencies": {
     "@codemirror/state": "^6.7.6",
@@ -27,6 +38,7 @@
     "@types/d3-force": "^3.0.10",
     "@types/event-kit": "^2.4.4",
     "@types/react": "^19.3.0",
+    "d3-force": "^3.0.0",
     "event-kit": "^2.5.3",
     "inkdrop-model": "^3.0.1",
     "tsdown": "^0.23.1",

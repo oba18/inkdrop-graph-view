@@ -84,7 +84,7 @@ export class GraphIndex {
     for (const status of ['completed', 'dropped'] as const) {
       for (let skip = 0; ; skip += PAGE_SIZE) {
         const res: any = await env.localDB.notes.findWithStatus(status, { limit: PAGE_SIZE, skip })
-        const docs: Note[] = res.docs ?? []
+        const docs: Note[] = res.docs ?? res.rows?.map((r: any) => r.doc).filter(Boolean) ?? []
         for (const doc of docs) this.index(doc)
         if (docs.length < PAGE_SIZE) break
       }
