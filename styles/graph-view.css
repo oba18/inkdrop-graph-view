@@ -3,6 +3,9 @@
 body.graph-view-active .main-layout > .note-list-bar-layout,
 body.graph-view-active .main-layout > .editor-layout,
 body.graph-view-active .main-layout > .graph-view-local {
+  /* Painted like the editor, following the active theme. */
+  background: var(--editor-background);
+  color: var(--text-color);
   display: none !important;
 }
 
@@ -18,6 +21,9 @@ body.graph-view-active .sidebar-menu-item.active:not(.sidebar-menu-item-graph) {
 }
 
 .graph-view-global {
+  /* Painted like the editor, following the active theme. */
+  background: var(--editor-background);
+  color: var(--text-color);
   flex: 1;
   min-width: 0;
   height: 100%;
@@ -62,7 +68,6 @@ body.graph-view-active .sidebar-menu-item.active:not(.sidebar-menu-item-graph) {
   overflow: hidden;
   user-select: none;
   font-size: 13px;
-  background: inherit;
 
   button {
     border: none;
@@ -222,8 +227,8 @@ body.graph-view-active .sidebar-menu-item.active:not(.sidebar-menu-item-graph) {
   padding: 4px 0 8px;
   border-radius: 10px;
   border: 1px solid rgba(128, 128, 128, 0.25);
-  /* Takes the editor background from the view, through the pane. */
-  background: inherit;
+  /* Frosted rather than opaque: matches the theme's (often translucent) editor background. */
+  backdrop-filter: blur(20px);
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
   z-index: 3;
 
@@ -342,7 +347,7 @@ body.graph-view-active .sidebar-menu-item.active:not(.sidebar-menu-item-graph) {
 
   button.active {
     background: var(--primary-color, #8a5cf5);
-    color: #fff;
+    color: var(--primary-button-text-color, #fff);
   }
 }
 
@@ -447,7 +452,7 @@ body.graph-view-active .sidebar-menu-item.active:not(.sidebar-menu-item-graph) {
 
   button.primary {
     background: var(--primary-color, #8a5cf5) !important;
-    color: #fff;
+    color: var(--primary-button-text-color, #fff);
   }
 
   button.primary:hover {

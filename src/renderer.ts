@@ -38,9 +38,25 @@ const CLICK_SLOP = 4
 function parseColor(c: string): [number, number, number] | null {
   const m = /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/.exec(c)
   if (m) return [Number(m[1]), Number(m[2]), Number(m[3])]
+  const srgb = /color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)/.exec(c)
+  if (srgb) return [1, 2, 3].map(i => Math.round(Number(srgb[i]) * 255)) as [number, number, number]
   const h = /^#([0-9a-f]{6})$/i.exec(c.trim())
   if (h) return [0, 2, 4].map(i => parseInt(h[1].slice(i, i + 2), 16)) as [number, number, number]
   return null
+}
+
+/**
+ * Resolves a CSS color (theme variables, `light-dark()`, `hsl()`…) to the
+ * `rgb()` form the canvas and `withAlpha` understand.
+ */
+function resolveColor(host: Element, css: string): string {
+  const probe = document.createElement('span')
+  probe.style.display = 'none'
+  probe.style.color = css
+  host.appendChild(probe)
+  const c = getComputedStyle(probe).color
+  probe.remove()
+  return c
 }
 
 function withAlpha(c: string, a: number): string {
@@ -171,17 +187,13 @@ export class GraphRenderer {
     const host = this.canvas.parentElement ?? this.canvas
     const cs = getComputedStyle(host)
     const text = cs.color || '#888'
-    const accent =
-      cs.getPropertyValue('--graph-accent').trim() ||
-      cs.getPropertyValue('--primary-color').trim() ||
-      '#8a5cf5'
     this.colors = {
       background: cs.backgroundColor,
       text,
       node: withAlpha(text, 0.55),
-      tag: '#57ab5a',
+      tag: resolveColor(host, 'var(--color-green-500, #57ab5a)'),
       link: withAlpha(text, 0.22),
-      accent
+      accent: resolveColor(host, 'var(--graph-accent, var(--primary-color, #8a5cf5))')
     }
     this.requestDraw()
   }

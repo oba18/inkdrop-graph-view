@@ -104,23 +104,6 @@ SideBarMenuItemGraph.displayName = 'GraphViewSideBarMenuItem'
 
 /* ---- the global graph ---- */
 
-/** Theme colors of the editor area, so the graph matches the theme. */
-function useEditorColors() {
-  const [colors, setColors] = useState<React.CSSProperties | undefined>()
-  useEffect(() => {
-    const read = () => {
-      const el = document.querySelector('.main-layout > .editor-layout') ?? document.querySelector('.editor-layout')
-      if (!el) return
-      const cs = getComputedStyle(el)
-      setColors({ background: cs.backgroundColor, color: cs.color })
-    }
-    read()
-    const sub = getEnv().themes.onDidChangeActiveThemes(() => setTimeout(read, 100))
-    return () => sub.dispose()
-  }, [])
-  return colors
-}
-
 export const GlobalGraphView: React.FC = () => {
   const active = globalGraph.use()
   if (!active || !peekEnv()) return null
@@ -131,7 +114,6 @@ GlobalGraphView.displayName = 'GraphViewGlobal'
 
 const GlobalGraphBody: React.FC = () => {
   const env = getEnv()
-  const colors = useEditorColors()
   const editingId = useEditingNoteId()
 
   useEffect(() => {
@@ -157,7 +139,7 @@ const GlobalGraphBody: React.FC = () => {
   }, [])
 
   return (
-    <div className="graph-view-global" style={colors}>
+    <div className="graph-view-global">
       <GraphPane
         kind="global"
         focus={editingId}
@@ -191,7 +173,6 @@ export const LocalGraphView: React.FC = () => {
 LocalGraphView.displayName = 'GraphViewLocal'
 
 const LocalGraphBody: React.FC = () => {
-  const colors = useEditorColors()
   const noteId = useEditingNoteId()
   const [width, setWidth] = useState(loadWidth)
   const dragRef = useRef<{ x: number; w: number } | null>(null)
@@ -217,7 +198,7 @@ const LocalGraphBody: React.FC = () => {
   }
 
   return (
-    <div className="graph-view-local" style={{ ...colors, width }}>
+    <div className="graph-view-local" style={{ width }}>
       <div
         className="graph-resize-handle"
         onPointerDown={onResizeStart}

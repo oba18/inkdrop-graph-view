@@ -27,3 +27,34 @@ export function openNote(noteId: string): void {
   env.window.focus()
   env.commands.dispatch(document.body, 'core:open-note', { noteId, selectInNoteListBar: true })
 }
+
+/**
+ * Calls `cb` whenever the app's colors may have changed: a theme switch (its
+ * stylesheets can land a moment after the event), a light/dark class change
+ * on `<body>`, or the OS appearance flipping.
+ */
+export function onThemeChange(cb: () => void): { dispose(): void } {
+  const timers = new Set<ReturnType<typeof setTimeout>>()
+  const fire = () => {
+    for (const delay of [0, 150, 600]) {
+      const t = setTimeout(() => {
+        timers.delete(t)
+        cb()
+      }, delay)
+      timers.add(t)
+    }
+  }
+  const themeSub = getEnv().themes.onDidChangeActiveThemes?.(fire)
+  const observer = new MutationObserver(fire)
+  observer.observe(document.body, { attributes: true, attributeFilter: ['class'] })
+  const media = window.matchMedia('(prefers-color-scheme: dark)')
+  media.addEventListener('change', fire)
+  return {
+    dispose() {
+      themeSub?.dispose()
+      observer.disconnect()
+      media.removeEventListener('change', fire)
+      for (const t of timers) clearTimeout(t)
+    }
+  }
+}

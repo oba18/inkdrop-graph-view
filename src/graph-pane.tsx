@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
-import { getEnv, openNote } from './env'
+import { getEnv, onThemeChange, openNote } from './env'
 import { getIndex } from './graph-data'
 import {
   DEFAULT_SETTINGS,
@@ -113,9 +113,9 @@ export const GraphPane: React.FC<Props> = ({ kind, center = null, focus = null, 
     })
     rendererRef.current = renderer
     // Theme switches restyle the app; pick the new colors up.
-    const themeSub = getEnv().themes.onDidChangeActiveThemes?.(() => setTimeout(() => renderer.readColors(), 100))
+    const themeSub = onThemeChange(() => renderer.readColors())
     return () => {
-      themeSub?.dispose()
+      themeSub.dispose()
       renderer.dispose()
       rendererRef.current = null
     }
