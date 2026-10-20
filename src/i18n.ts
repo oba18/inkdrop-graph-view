@@ -1,4 +1,5 @@
 import type { ConfigSchema } from '@inkdropapp/types'
+import { useEffect, useState } from 'react'
 
 import { peekEnv } from './env'
 
@@ -18,6 +19,16 @@ function systemLang(): Lang {
 export function lang(): Lang {
   const setting = peekEnv()?.config.get(`${PACKAGE}.language`)
   return setting === 'en' || setting === 'ja' ? setting : systemLang()
+}
+
+/** Re-renders the calling component when the Language setting changes. */
+export function useLanguage(): Lang {
+  const [, setVersion] = useState(0)
+  useEffect(() => {
+    const sub = peekEnv()?.config.onDidChange(`${PACKAGE}.language`, () => setVersion(v => v + 1))
+    return () => sub?.dispose()
+  }, [])
+  return lang()
 }
 
 /** The English or Japanese text, for the current language. */

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 import { getEnv, peekEnv } from './env'
-import { tr } from './i18n'
+import { tr, useLanguage } from './i18n'
 import { GraphPane } from './graph-pane'
 
 /* ---- small observable flags ---- */
@@ -106,6 +106,7 @@ SideBarMenuItemGraph.displayName = 'GraphViewSideBarMenuItem'
 /* ---- the global graph ---- */
 
 export const GlobalGraphView: React.FC = () => {
+  useLanguage()
   const active = globalGraph.use()
   if (!active || !peekEnv()) return null
   return <GlobalGraphBody />
@@ -166,6 +167,7 @@ function loadWidth(): number {
 }
 
 export const LocalGraphView: React.FC = () => {
+  useLanguage()
   const open = localGraph.use()
   if (!open || !peekEnv()) return null
   return <LocalGraphBody />
@@ -227,6 +229,7 @@ const LocalGraphBody: React.FC = () => {
 
 /** Toggles the local graph pane for the open note. */
 export const LocalGraphButton: React.FC = () => {
+  useLanguage()
   const open = localGraph.use()
   const env = peekEnv()
   if (!env) return null
