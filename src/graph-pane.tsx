@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 import { getEnv, onThemeChange, openNote } from './env'
 import { getIndex } from './graph-data'
+import { tr } from './i18n'
 import {
   DEFAULT_SETTINGS,
   PALETTE,
@@ -135,14 +136,14 @@ export const GraphPane: React.FC<Props> = ({ kind, center = null, focus = null, 
   }, [focus])
 
   const hoverRegion = hover?.region ? data?.regions.find(r => r.id === hover.region) : undefined
-  const counts = data ? `${data.nodes.length} ノート · ${data.links.length} リンク` : ''
+  const counts = data ? tr(`${data.nodes.length} notes · ${data.links.length} links`, `${data.nodes.length} ノート · ${data.links.length} リンク`) : ''
 
   return (
     <div className={`graph-pane graph-pane-${kind}`}>
       <canvas ref={canvasRef} className="graph-canvas" />
-      {!index?.started && <div className="graph-message">ノートを読み込み中…</div>}
-      {index?.started && kind === 'local' && !center && <div className="graph-message">ノートを開くと、そのノートのつながりを表示します</div>}
-      {data && data.nodes.length === 0 && <div className="graph-message">表示するノートがありません</div>}
+      {!index?.started && <div className="graph-message">{tr('Loading notes…', 'ノートを読み込み中…')}</div>}
+      {index?.started && kind === 'local' && !center && <div className="graph-message">{tr("Open a note to see its connections", 'ノートを開くと、そのノートのつながりを表示します')}</div>}
+      {data && data.nodes.length === 0 && <div className="graph-message">{tr('No notes to show', '表示するノートがありません')}</div>}
 
       <div className="graph-toolbar">
         {toolbar}
@@ -150,13 +151,13 @@ export const GraphPane: React.FC<Props> = ({ kind, center = null, focus = null, 
       </div>
 
       <div className="graph-zoom">
-        <button type="button" title="拡大" onClick={() => rendererRef.current?.zoomBy(1.3)}>
+        <button type="button" title={tr('Zoom in', '拡大')} onClick={() => rendererRef.current?.zoomBy(1.3)}>
           ＋
         </button>
-        <button type="button" title="縮小" onClick={() => rendererRef.current?.zoomBy(1 / 1.3)}>
+        <button type="button" title={tr('Zoom out', '縮小')} onClick={() => rendererRef.current?.zoomBy(1 / 1.3)}>
           −
         </button>
-        <button type="button" title="全体を表示" onClick={() => rendererRef.current?.fit()}>
+        <button type="button" title={tr('Fit to view', '全体を表示')} onClick={() => rendererRef.current?.fit()}>
           ⤢
         </button>
       </div>
@@ -170,7 +171,7 @@ export const GraphPane: React.FC<Props> = ({ kind, center = null, focus = null, 
                 {hoverRegion.label} ·{' '}
               </span>
             )}
-            リンク {hover.degree} 件 · クリックで開く
+            {tr(`${hover.degree} links · click to open`, `リンク ${hover.degree} 件 · クリックで開く`)}
           </div>
         </div>
       )}
@@ -178,7 +179,7 @@ export const GraphPane: React.FC<Props> = ({ kind, center = null, focus = null, 
       <button
         type="button"
         className={`graph-settings-toggle${panelOpen ? ' active' : ''}`}
-        title="グラフの設定"
+        title={tr('Graph settings', 'グラフの設定')}
         onClick={() => setPanelOpen(o => !o)}
       >
         <GearIcon />
@@ -262,9 +263,9 @@ const Slider: React.FC<{
 )
 
 const REGION_CHOICES: Array<{ value: RegionBy; label: string }> = [
-  { value: 'tag', label: 'タグ' },
-  { value: 'book', label: 'ノートブック' },
-  { value: 'none', label: 'なし' }
+  { value: 'tag', label: tr('Tag', 'タグ') },
+  { value: 'book', label: tr('Notebook', 'ノートブック') },
+  { value: 'none', label: tr('None', 'なし') }
 ]
 
 const SettingsPanel: React.FC<PanelProps> = ({ kind, settings, update, onClose, onAnimate }) => {
@@ -284,50 +285,50 @@ const SettingsPanel: React.FC<PanelProps> = ({ kind, settings, update, onClose, 
       <div className="graph-settings-header">
         <button
           type="button"
-          title="既定の設定に戻す"
+          title={tr('Reset to defaults', '既定の設定に戻す')}
           onClick={() => update({ ...DEFAULT_SETTINGS, open: s.open })}
         >
           ↺
         </button>
-        <button type="button" title="閉じる" onClick={onClose}>
+        <button type="button" title={tr('Close', '閉じる')} onClick={onClose}>
           ✕
         </button>
       </div>
 
-      <Section id="filters" title="フィルター" settings={s} update={update}>
+      <Section id="filters" title={tr('Filters', 'フィルター')} settings={s} update={update}>
         <input
           type="search"
           className="graph-search"
-          placeholder="ノートを検索…  tag:x  book:x  -status:dropped"
+          placeholder={tr('Search notes…  tag:x  book:x  -status:dropped', 'ノートを検索…  tag:x  book:x  -status:dropped')}
           value={s.search}
           onChange={e => update({ search: e.target.value })}
         />
         {kind === 'local' && (
           <>
-            <Slider label={`深さ（${s.depth}）`} value={s.depth} min={1} max={5} step={1} onChange={v => update({ depth: v })} />
-            <Toggle label="リンク元（被リンク）" checked={s.showIncoming} onChange={v => update({ showIncoming: v })} />
-            <Toggle label="リンク先" checked={s.showOutgoing} onChange={v => update({ showOutgoing: v })} />
+            <Slider label={tr(`Depth (${s.depth})`, `深さ（${s.depth}）`)} value={s.depth} min={1} max={5} step={1} onChange={v => update({ depth: v })} />
+            <Toggle label={tr('Incoming links (backlinks)', 'リンク元（被リンク）')} checked={s.showIncoming} onChange={v => update({ showIncoming: v })} />
+            <Toggle label={tr('Outgoing links', 'リンク先')} checked={s.showOutgoing} onChange={v => update({ showOutgoing: v })} />
             <Toggle
-              label="近傍のリンク"
-              hint="つながったノート同士のリンクも表示"
+              label={tr('Neighbor links', '近傍のリンク')}
+              hint={tr('Also show links between the connected notes', 'つながったノート同士のリンクも表示')}
               checked={s.neighborLinks}
               onChange={v => update({ neighborLinks: v })}
             />
           </>
         )}
-        <Toggle label="タグ" checked={s.showTags} onChange={v => update({ showTags: v })} />
-        <Toggle label="孤立したノート" hint="どことも繋がっていないノート" checked={s.showOrphans} onChange={v => update({ showOrphans: v })} />
+        <Toggle label={tr('Tags', 'タグ')} checked={s.showTags} onChange={v => update({ showTags: v })} />
+        <Toggle label={tr('Orphans', '孤立したノート')} hint={tr('Notes with no links', 'どことも繋がっていないノート')} checked={s.showOrphans} onChange={v => update({ showOrphans: v })} />
         <Toggle
-          label="完了・中止のノート"
-          hint="ステータスが Completed / Dropped のノート"
+          label={tr('Completed / dropped notes', '完了・中止のノート')}
+          hint={tr('Notes whose status is Completed or Dropped', 'ステータスが Completed / Dropped のノート')}
           checked={s.showClosed}
           onChange={v => update({ showClosed: v })}
         />
       </Section>
 
-      <Section id="regions" title="領域" settings={s} update={update}>
+      <Section id="regions" title={tr('Regions', '領域')} settings={s} update={update}>
         <div className="graph-row graph-choice">
-          <span>まとめ方</span>
+          <span>{tr('Group by', 'まとめ方')}</span>
           <div className="graph-segment">
             {REGION_CHOICES.map(c => (
               <button
@@ -343,10 +344,10 @@ const SettingsPanel: React.FC<PanelProps> = ({ kind, settings, update, onClose, 
         </div>
         {s.regionBy !== 'none' && (
           <>
-            <Toggle label="領域を表示" hint="領域の背景と名前を描きます" checked={s.showRegions} onChange={v => update({ showRegions: v })} />
-            <Slider label="まとまりの強さ" value={s.regionForce} min={0} max={1} step={0.01} onChange={v => update({ regionForce: v })} />
+            <Toggle label={tr('Show regions', '領域を表示')} hint={tr('Draws the region backgrounds and names', '領域の背景と名前を描きます')} checked={s.showRegions} onChange={v => update({ showRegions: v })} />
+            <Slider label={tr('Clustering strength', 'まとまりの強さ')} value={s.regionForce} min={0} max={1} step={0.01} onChange={v => update({ regionForce: v })} />
             <Slider
-              label={`領域の数（最大 ${s.maxRegions}）`}
+              label={tr(`Number of regions (max ${s.maxRegions})`, `領域の数（最大 ${s.maxRegions}）`)}
               value={s.maxRegions}
               min={2}
               max={30}
@@ -355,20 +356,20 @@ const SettingsPanel: React.FC<PanelProps> = ({ kind, settings, update, onClose, 
             />
             <p className="graph-hint">
               {s.regionBy === 'tag'
-                ? 'ノートの中で一番多く使われているタグの領域に入ります。'
-                : '最上位のノートブックごとの領域に入ります。'}
-              ノートが少ない領域は「その他」として中央に集まります。
+                ? tr('Each note goes into the region of its most used tag. ', 'ノートの中で一番多く使われているタグの領域に入ります。')
+                : tr('Each top-level notebook gets its own region. ', '最上位のノートブックごとの領域に入ります。')}
+              {tr('Regions with few notes gather in the center as "Others".', 'ノートが少ない領域は「その他」として中央に集まります。')}
             </p>
           </>
         )}
       </Section>
 
-      <Section id="groups" title="グループ" settings={s} update={update}>
+      <Section id="groups" title={tr('Groups', 'グループ')} settings={s} update={update}>
         {s.groups.map((g, i) => (
           <div key={i} className="graph-group">
             <input
               type="text"
-              placeholder="tag:x / book:x / キーワード"
+              placeholder={tr('tag:x / book:x / keyword', 'tag:x / book:x / キーワード')}
               value={g.query}
               onChange={e => update({ groups: s.groups.map((x, j) => (j === i ? { ...x, query: e.target.value } : x)) })}
             />
@@ -377,7 +378,7 @@ const SettingsPanel: React.FC<PanelProps> = ({ kind, settings, update, onClose, 
               value={g.color}
               onChange={e => update({ groups: s.groups.map((x, j) => (j === i ? { ...x, color: e.target.value } : x)) })}
             />
-            <button type="button" title="削除" onClick={() => update({ groups: s.groups.filter((_, j) => j !== i) })}>
+            <button type="button" title={tr('Delete', '削除')} onClick={() => update({ groups: s.groups.filter((_, j) => j !== i) })}>
               ✕
             </button>
           </div>
@@ -388,31 +389,31 @@ const SettingsPanel: React.FC<PanelProps> = ({ kind, settings, update, onClose, 
             className="primary"
             onClick={() => update({ groups: [...s.groups, { query: '', color: PALETTE[s.groups.length % PALETTE.length] }] })}
           >
-            新しいグループ
+            {tr('New group', '新しいグループ')}
           </button>
-          <button type="button" onClick={colorByNotebook} title="最上位のノートブックごとにグループを作り直します">
-            ノートブックで色分け
+          <button type="button" onClick={colorByNotebook} title={tr('Recreates the groups, one per top-level notebook', '最上位のノートブックごとにグループを作り直します')}>
+            {tr('Color by notebook', 'ノートブックで色分け')}
           </button>
         </div>
       </Section>
 
-      <Section id="display" title="表示" settings={s} update={update}>
-        <Toggle label="矢印" checked={s.arrows} onChange={v => update({ arrows: v })} />
-        <Slider label="文字のフェード" value={s.textFade} min={-3} max={3} step={0.1} onChange={v => update({ textFade: v })} />
-        <Slider label="ノードの大きさ" value={s.nodeSize} min={0.1} max={5} step={0.05} onChange={v => update({ nodeSize: v })} />
-        <Slider label="リンクの太さ" value={s.linkThickness} min={0.1} max={5} step={0.05} onChange={v => update({ linkThickness: v })} />
+      <Section id="display" title={tr('Display', '表示')} settings={s} update={update}>
+        <Toggle label={tr('Arrows', '矢印')} checked={s.arrows} onChange={v => update({ arrows: v })} />
+        <Slider label={tr('Text fade threshold', '文字のフェード')} value={s.textFade} min={-3} max={3} step={0.1} onChange={v => update({ textFade: v })} />
+        <Slider label={tr('Node size', 'ノードの大きさ')} value={s.nodeSize} min={0.1} max={5} step={0.05} onChange={v => update({ nodeSize: v })} />
+        <Slider label={tr('Link thickness', 'リンクの太さ')} value={s.linkThickness} min={0.1} max={5} step={0.05} onChange={v => update({ linkThickness: v })} />
         <div className="graph-buttons">
-          <button type="button" className="primary" onClick={onAnimate} title="ノートを作成順に表示していきます">
-            アニメーション
+          <button type="button" className="primary" onClick={onAnimate} title={tr('Shows the notes one by one in the order they were created', 'ノートを作成順に表示していきます')}>
+            {tr('Animate', 'アニメーション')}
           </button>
         </div>
       </Section>
 
-      <Section id="forces" title="フォース" settings={s} update={update}>
-        <Slider label="中心力" value={s.centerForce} min={0} max={1} step={0.01} onChange={v => update({ centerForce: v })} />
-        <Slider label="反発力" value={s.repelForce} min={0} max={20} step={0.1} onChange={v => update({ repelForce: v })} />
-        <Slider label="リンクの力" value={s.linkForce} min={0} max={1} step={0.01} onChange={v => update({ linkForce: v })} />
-        <Slider label="リンクの距離" value={s.linkDistance} min={30} max={500} step={1} onChange={v => update({ linkDistance: v })} />
+      <Section id="forces" title={tr('Forces', 'フォース')} settings={s} update={update}>
+        <Slider label={tr('Center force', '中心力')} value={s.centerForce} min={0} max={1} step={0.01} onChange={v => update({ centerForce: v })} />
+        <Slider label={tr('Repel force', '反発力')} value={s.repelForce} min={0} max={20} step={0.1} onChange={v => update({ repelForce: v })} />
+        <Slider label={tr('Link force', 'リンクの力')} value={s.linkForce} min={0} max={1} step={0.01} onChange={v => update({ linkForce: v })} />
+        <Slider label={tr('Link distance', 'リンクの距離')} value={s.linkDistance} min={30} max={500} step={1} onChange={v => update({ linkDistance: v })} />
       </Section>
     </div>
   )

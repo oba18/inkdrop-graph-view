@@ -1,4 +1,5 @@
 import type { GraphIndex, NoteEntry } from './graph-data'
+import { tr } from './i18n'
 
 /* ---- settings (the Obsidian graph panel: Filters / Groups / Display / Forces) ---- */
 
@@ -311,7 +312,7 @@ export function buildGraph(
     nodes.push({
       id,
       kind: 'note',
-      label: note.title || '無題のノート',
+      label: note.title || tr('Untitled', '無題のノート'),
       color: group?.color ?? null,
       region: null,
       degree: deg,

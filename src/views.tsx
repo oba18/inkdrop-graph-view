@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 import { getEnv, peekEnv } from './env'
+import { tr } from './i18n'
 import { GraphPane } from './graph-pane'
 
 /* ---- small observable flags ---- */
@@ -211,8 +212,8 @@ const LocalGraphBody: React.FC = () => {
         focus={noteId}
         toolbar={
           <>
-            <span className="graph-title">ローカルグラフ</span>
-            <button type="button" className="graph-close" title="閉じる" onClick={() => localGraph.set(false)}>
+            <span className="graph-title">{tr('Local graph', 'ローカルグラフ')}</span>
+            <button type="button" className="graph-close" title={tr('Close', '閉じる')} onClick={() => localGraph.set(false)}>
               ✕
             </button>
           </>
@@ -234,7 +235,7 @@ export const LocalGraphButton: React.FC = () => {
   return (
     <AppHeaderButton
       className={`icon graph-view-local-button${open ? ' active' : ''}`}
-      title={open ? 'ローカルグラフを閉じる' : 'このノートのローカルグラフを表示'}
+      title={open ? tr('Close local graph', 'ローカルグラフを閉じる') : tr("Show this note's local graph", 'このノートのローカルグラフを表示')}
       onClick={() => env.commands.dispatch(document.body, 'graph-view:toggle-local' as any)}
     >
       <GraphIcon />

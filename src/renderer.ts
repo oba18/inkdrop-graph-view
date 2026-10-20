@@ -10,6 +10,7 @@ import {
 } from 'd3-force'
 
 import type { GLink, GNode, GraphData, GraphSettings, Region } from './graph-model'
+import { tr } from './i18n'
 
 export interface RendererCallbacks {
   onOpen(node: GNode, e: { metaKey: boolean; shiftKey: boolean }): void
@@ -670,7 +671,7 @@ export class GraphRenderer {
       if (list) list.push(p)
       else members.set(key, [p])
     }
-    const others: Region = { id: OTHERS, label: 'その他', color: this.colors.text, size: members.get(OTHERS)?.length ?? 0 }
+    const others: Region = { id: OTHERS, label: tr('Others', 'その他'), color: this.colors.text, size: members.get(OTHERS)?.length ?? 0 }
     const pad = 26 * (this.settings.nodeSize ?? 1)
     const out: Array<{ region: Region; hull: Pt[] }> = []
     for (const region of [...this.regions, others]) {
