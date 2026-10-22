@@ -10,6 +10,7 @@ import {
   LocalGraphButton,
   LocalGraphView,
   SideBarMenuItemGraph,
+  closeOnOtherPageView,
   globalGraph,
   localGraph
 } from './views'
@@ -22,6 +23,7 @@ class GraphViewPlugin implements IInkdropPlugin {
   private menus: { dispose(): void } | null = null
   private languageWatch: { dispose(): void } | null = null
   private stopJump: (() => void) | null = null
+  private stopPageView: (() => void) | null = null
   private index: GraphIndex | null = null
   private commands: { dispose(): void } | null = null
 
@@ -66,6 +68,7 @@ class GraphViewPlugin implements IInkdropPlugin {
     } as any)
     this.menus = addMenus(env)
     // ⌘K: type "graph" / "グラフ" to open the graph.
+    if (env.isMainWindow) this.stopPageView = closeOnOtherPageView()
     if (env.isMainWindow)
       this.stopJump = registerJumpSource(env, 'graph-view-views', 'Graph', () => tr('Open the graph', 'グラフを開く'), [
         { id: 'graph', icon: '🕸️', en: 'Graph view', ja: 'グラフ', keywords: 'network links', command: 'graph-view:show' },
@@ -83,6 +86,7 @@ class GraphViewPlugin implements IInkdropPlugin {
       this.menus?.dispose()
       this.menus = addMenus(env)
     // ⌘K: type "graph" / "グラフ" to open the graph.
+    if (env.isMainWindow) this.stopPageView = closeOnOtherPageView()
     if (env.isMainWindow)
       this.stopJump = registerJumpSource(env, 'graph-view-views', 'Graph', () => tr('Open the graph', 'グラフを開く'), [
         { id: 'graph', icon: '🕸️', en: 'Graph view', ja: 'グラフ', keywords: 'network links', command: 'graph-view:show' },
@@ -102,6 +106,8 @@ class GraphViewPlugin implements IInkdropPlugin {
   deactivate(env: Environment) {
     this.stopJump?.()
     this.stopJump = null
+    this.stopPageView?.()
+    this.stopPageView = null
     this.commands?.dispose()
     this.commands = null
     this.menus?.dispose()

@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { getEnv, peekEnv } from './env'
 import { tr, useLanguage } from './i18n'
 import { GraphPane } from './graph-pane'
+import { announcePageView, onOtherPageView } from './page-view'
 
 /* ---- small observable flags ---- */
 
@@ -36,7 +37,17 @@ const LOCAL_KEY = 'inkdrop-graph-view:local-open'
 const LOCAL_WIDTH_KEY = 'inkdrop-graph-view:local-width'
 
 /** Whether the global graph is showing, in place of the note list and editor. */
-export const globalGraph = flag(false, v => document.body.classList.toggle(GLOBAL_CLASS, v))
+export const globalGraph = flag(false, v => {
+  document.body.classList.toggle(GLOBAL_CLASS, v)
+  if (v) announcePageView(PAGE_VIEW_ID)
+})
+
+const PAGE_VIEW_ID = 'graph-view'
+
+/** Closes the global graph when another full-page view (Tasks, Habits…) opens. */
+export function closeOnOtherPageView(): () => void {
+  return onOtherPageView(PAGE_VIEW_ID, () => globalGraph.set(false))
+}
 
 function loadBool(key: string): boolean {
   try {
