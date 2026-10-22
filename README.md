@@ -17,6 +17,7 @@ Works with the Inkdrop 6+ desktop app. The keyboard shortcuts are for macOS (on 
 ## Usage
 
 - **Global graph**: **Graph** in the sidebar (or `⌘⌥G`). Shown in place of the note list and editor
+- **From ⌘K**: press `⌘K`, type `graph` (or `グラフ`) and Enter for the global graph; `local graph` (or `ローカルグラフ`) toggles the local graph
 - **Local graph**: The graph button at the top of the editor (or `⌘⌥L`). Shows only the notes connected to the open note, to the right of the editor (drag its left edge to resize)
 
 | Action | What it does |
@@ -77,6 +78,7 @@ Inkdrop 6 以降のデスクトップ版で動きます。ショートカット�
 ## 使い方
 
 - **グラフ全体**: サイドバーの **Graph**（または `⌘⌥G`）。ノート一覧とエディタの位置に表示されます
+- **⌘K から**: `⌘K` を押して `グラフ`（または `graph`）と入力して Enter でグラフ全体、`ローカルグラフ`（または `local graph`）でローカルグラフの表示を切り替えます
 - **ローカルグラフ**: エディタ上部のグラフボタン（または `⌘⌥L`）。開いているノートとつながったノートだけを、エディタの右側に表示します（左端をドラッグで幅を変更）
 
 | 操作 | 動作 |

@@ -3,6 +3,7 @@ import type { Environment, IInkdropPlugin } from '@inkdropapp/types'
 import { setEnv } from './env'
 import { languageConfig, tr } from './i18n'
 import { addMenus } from './menus'
+import { registerJumpSource } from './jump-source'
 import { GraphIndex } from './graph-data'
 import {
   GlobalGraphView,
@@ -20,6 +21,7 @@ class GraphViewPlugin implements IInkdropPlugin {
   config = { language: languageConfig }
   private menus: { dispose(): void } | null = null
   private languageWatch: { dispose(): void } | null = null
+  private stopJump: (() => void) | null = null
   private index: GraphIndex | null = null
   private commands: { dispose(): void } | null = null
 
@@ -63,13 +65,43 @@ class GraphViewPlugin implements IInkdropPlugin {
       }
     } as any)
     this.menus = addMenus(env)
+    // ⌘K: type "graph" / "グラフ" to open the graph.
+    if (env.isMainWindow)
+      this.stopJump = registerJumpSource(env, 'graph-view-views', 'Graph', () => tr('Open the graph', 'グラフを開く'), [
+        { id: 'graph', icon: '🕸️', en: 'Graph view', ja: 'グラフ', keywords: 'network links', command: 'graph-view:show' },
+        {
+          id: 'local',
+          icon: '🔗',
+          en: 'Local graph',
+          ja: 'ローカルグラフ',
+          keywords: 'graph links note',
+          detail: () => tr("The open note's connections (toggle)", '開いているノートのつながり（切り替え）'),
+          command: 'graph-view:toggle-local'
+        }
+      ])
     this.languageWatch = env.config.onDidChange('graph-view.language', () => {
       this.menus?.dispose()
       this.menus = addMenus(env)
+    // ⌘K: type "graph" / "グラフ" to open the graph.
+    if (env.isMainWindow)
+      this.stopJump = registerJumpSource(env, 'graph-view-views', 'Graph', () => tr('Open the graph', 'グラフを開く'), [
+        { id: 'graph', icon: '🕸️', en: 'Graph view', ja: 'グラフ', keywords: 'network links', command: 'graph-view:show' },
+        {
+          id: 'local',
+          icon: '🔗',
+          en: 'Local graph',
+          ja: 'ローカルグラフ',
+          keywords: 'graph links note',
+          detail: () => tr("The open note's connections (toggle)", '開いているノートのつながり（切り替え）'),
+          command: 'graph-view:toggle-local'
+        }
+      ])
     })
   }
 
   deactivate(env: Environment) {
+    this.stopJump?.()
+    this.stopJump = null
     this.commands?.dispose()
     this.commands = null
     this.menus?.dispose()
