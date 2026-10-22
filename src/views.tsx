@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { getEnv, peekEnv } from './env'
 import { tr, useLanguage } from './i18n'
 import { GraphPane } from './graph-pane'
-import { announcePageView, onOtherPageView } from './page-view'
+import { announcePageView, closeOnOpenNote, onOtherPageView } from './page-view'
 
 /* ---- small observable flags ---- */
 
@@ -44,9 +44,11 @@ export const globalGraph = flag(false, v => {
 
 const PAGE_VIEW_ID = 'graph-view'
 
-/** Closes the global graph when another full-page view (Tasks, Habits…) opens. */
+/** Closes the global graph when another full-page view (Tasks, Habits…) opens, or a note is opened. */
 export function closeOnOtherPageView(): () => void {
-  return onOtherPageView(PAGE_VIEW_ID, () => globalGraph.set(false))
+  const close = () => globalGraph.set(false)
+  const stops = [onOtherPageView(PAGE_VIEW_ID, close), closeOnOpenNote(close)]
+  return () => stops.forEach(s => s())
 }
 
 function loadBool(key: string): boolean {

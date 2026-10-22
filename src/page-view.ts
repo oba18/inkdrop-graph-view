@@ -18,3 +18,14 @@ export function onOtherPageView(id: string, close: () => void): () => void {
   window.addEventListener(EVENT, handler)
   return () => window.removeEventListener(EVENT, handler)
 }
+
+/**
+ * Calls `close` whenever a note is opened (`core:open-note`, from ⌘K, links,
+ * a task row, a graph node…), even when it is the note already behind the
+ * view, so the editor shows. Commands are DOM events: a window capture
+ * listener sees every dispatch.
+ */
+export function closeOnOpenNote(close: () => void): () => void {
+  window.addEventListener('core:open-note', close, true)
+  return () => window.removeEventListener('core:open-note', close, true)
+}
